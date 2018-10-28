@@ -37,10 +37,10 @@ pb3 = pb2 + 3
 
 # independent assumption
 
-pb1 + pb3
-pb1 * pb3
-pb1 - pb3
-pb1 / pb3
+p.pbox.iadd(pb1, pb3)
+p.pbox.imul(pb1, pb3)
+p.pbox.isub(pb1, pb3)
+p.pbox.idiv(pb1, pb3)
 
 # frechet assumptions
 p.pbox.fadd(pb1, pb3)
@@ -56,7 +56,7 @@ p.pbox.plot(pb1)
 
 pb4 = p.pbox.uniform(0, 1, 40)
 pb5 = pb4
-pb6 = pb4 + pb5
+pb6 = p.pbox.iadd(pb4, pb5)
 # Williamson & Downs figure 21
 p.pbox.plot(pb6)
 

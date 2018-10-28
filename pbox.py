@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import scipy.stats as st
 
 class cdf:
-	"""CUmulative distribution function"""
+	"""Cumulative distribution function"""
 	
 	def __init__(self, xs):
 		if np.size(xs) < 2:
@@ -27,6 +27,7 @@ class cdf:
 				return 1
 			
 class pbox:
+	"""pbox for modeling."""
 	
 	def __init__(self, u, l):
 		if (np.size(u)!=np.size(l)):
@@ -60,11 +61,13 @@ class pbox:
 	def sd(self):
 		return self.central_moment(2)
 	
+	# unary negation
 	def __neg__(self):
 		uxs = np.negative(self.l.xs[::-1])
 		lxs = np.negative(self.u.xs[::-1])
 		return pbox(uxs, lxs)
 	
+	# logicals
 	def __le__(self, e2):
 		return self.l.xs[(len(self)-1)] <= e2
 	def __lt__(self, e2):
@@ -74,29 +77,12 @@ class pbox:
 	def __gt__(self, e2):
 		return self.u.xs[0] > e2
 	
-	# implementation of Williamson & Downs, Figure 14, page 127
-
-	def sortfunc(self, xs1, xs2, func):
-		pass
-	
-	def conv(obj1, obj2, func):
-		n = len(obj1)
-		if n != len(obj2):
-			raise ValueError('length of both pboxes must be same')
-		uxs = pbox.sortfunc(obj1.u.xs, obj2.u.xs, func)
-		lxs = pbox.sortfunc(obj1.l.xs, obj2.l.xs, func)
-		iu = slice(0, n**2, n)
-		il = slice((n-1), n**2, n)
-		return pbox(uxs[iu], lxs[il])
-	
-	def __add__(obj1, obj2):
-		if (type(obj1) == pbox):
-			if (type(obj2) == pbox):
-				return pbox.conv(obj1, obj2, op.add)
-			elif (type(obj2) == int) or (type(obj2) == float):
-				uxs = np.add(obj1.u.xs, obj2)
-				lxs = np.add(obj1.l.xs, obj2)
-				return pbox(uxs, lxs)
+	# primitive operators
+	def __add__(self, obj2):
+		if (type(obj2) == int) or (type(obj2) == float):
+			uxs = np.add(self.u.xs, obj2)
+			lxs = np.add(self.l.xs, obj2)
+			return pbox(uxs, lxs)
 		else:
 			raise ValueError('this operation is not defined')
 		
@@ -106,23 +92,20 @@ class pbox:
 		else:
 			raise ValueError('this operation is not defined')
 	
-	def __sub__(obj1, obj2):
-		return obj1 + (-obj2)
+	def __sub__(self, obj2):
+		return self + (-obj2)
 	
 	def __rsub__(self, obj1):
 		return obj1 + (-self)
 	
-	def __mul__(obj1, obj2):
-		if (obj1 < 0) or (obj2 < 0):
+	def __mul__(self, obj2):
+		if (self < 0) or (obj2 < 0):
 			raise ValueError('inputs can not be negative')
 		else:	
-			if (type(obj1) == pbox):
-				if (type(obj2) == pbox):
-					return pbox.conv(obj1, obj2, op.mul)
-				elif (type(obj2) == int) or (type(obj2) == float):
-					uxs = np.multiply(obj1.u.xs, obj2)
-					lxs = np.multiply(obj1.l.xs, obj2)
-					return pbox(uxs, lxs)
+			if (type(obj2) == int) or (type(obj2) == float):
+				uxs = np.multiply(self.u.xs, obj2)
+				lxs = np.multiply(self.l.xs, obj2)
+				return pbox(uxs, lxs)
 			else:
 				raise ValueError('this operation is not defined')
 	
@@ -140,11 +123,40 @@ class pbox:
 			lxs = np.divide(obj1, self.u.xs)[::-1]
 			return pbox(uxs, lxs)
 		
-	def __truediv__(obj1, obj2):
-		if (obj1 <= 0) or (obj2 <= 0):
+	def __truediv__(self, obj2):
+		if (self <= 0) or (obj2 <= 0):
 			raise ValueError('inputs must be strictly positive')
 		else:
-			return obj1 * (1/obj2)
+			return self * (1/obj2)
+	
+	# implementation of Williamson & Downs convolution algorithm
+
+	def conv(obj1, obj2, func):
+		n = len(obj1)
+		if n != len(obj2):
+			raise ValueError('length of both pboxes must be same')
+		uxs = pbox.sortfunc(obj1.u.xs, obj2.u.xs, func)
+		lxs = pbox.sortfunc(obj1.l.xs, obj2.l.xs, func)
+		iu = slice(0, n**2, n)
+		il = slice((n-1), n**2, n)
+		return pbox(uxs[iu], lxs[il])
+	
+	
+	# operations with independent assumption
+	
+	def iadd(obj1, obj2):
+		return pbox.conv(obj1, obj2, op.add)
+	
+	def isub(obj1, obj2):
+		return pbox.iadd(obj1, -obj2)
+	
+	def imul(obj1, obj2):
+		return pbox.conv(obj1, obj2, op.mul)
+	
+	def idiv(obj1, obj2):
+		return pbox.imul(obj1, (1/obj2))
+	
+	# Frechet dependency
 		
 	def frechet(obj1, obj2, func):
 		n = len(obj1)
@@ -158,6 +170,8 @@ class pbox:
 		
 		return pbox(uxs, lxs)
 	
+	# operations with Frechet dependency assumption
+	
 	def fadd(obj1, obj2):
 		return pbox.frechet(obj1, obj2, np.add)
 	
@@ -168,10 +182,12 @@ class pbox:
 			return pbox.frechet(obj1, obj2, np.multiply)
 		
 	def fsub(obj1, obj2):
-		return fadd(obj1, -obj2)
+		return pbox.fadd(obj1, -obj2)
 	
 	def fdiv(obj1, obj2):
-		return fmul(obj1, 1/obj2)
+		return pbox.fmul(obj1, 1/obj2)
+	
+	# p-box plot
 	
 	def plot(self):
 		xs_l = min(self.u.xs) - 10**(-5)
