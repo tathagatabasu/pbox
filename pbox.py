@@ -280,19 +280,28 @@ class pbox:
 	
 	# p-box plot
 	
-	def plot(self):
+	def plot(self, xlim=[None, None], title='P-Box'):
 		xs_l = min(self.u.xs) - 10**(-5)
 		xs_u = max(self.l.xs) + 10**(-5)
 		xs = np.linspace(xs_l, xs_u, 200)
 		fxs = [None]*200
 		for i in np.linspace(0,199,200):
 			fxs[int(i)]=pbox.eval(self, xs[int(i)])
+		xmin = xlim[0]
+		xmax = xlim[1]
+		if xlim[0]==None:
+			if xlim[1]==None:
+				xmin = xs_l - 10**-1
+				xmax = xs_u + 10**-1
+			else:
+				xmin = xs_l - 10**-1
+		elif xlim[1]==None:
+			xmax = xs_u + 10**-1
 		
-		xmin = xs_l - 1
-		xmax = xs_u + 1
 		plt.plot(xs, fxs, 'k')
 		plt.xlabel('x')
 		plt.ylabel('CDF')
+		plt.title(title)
 		plt.xlim(xmin, xmax)
 		plt.show()
 		

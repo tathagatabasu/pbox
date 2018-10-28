@@ -105,3 +105,15 @@ pb9 = p.pbox.fadd(pb7, pb8)
 # Williamson & Downs figure 19
 p.pbox.plot(pb9)
 
+# Ferson & Siegrist figure 4
+
+pbu1 = p.pbox.uniform(1, 25)
+pbu2 = p.pbox.fadd(pbu1, pbu1)
+p.pbox.plot(pbu2, [0, 50], 'frechet dependency')
+pbu2 = p.pbox.padd(pbu1, pbu1)
+p.pbox.plot(pbu2, [0, 50], 'perfect dependency')
+pbu2 = p.pbox.oadd(pbu1, pbu1)
+p.pbox.plot(pbu2, [0, 50], 'opposite dependency')
+pbu2 = p.pbox.iadd(pbu1, pbu1)
+p.pbox.plot(pbu2, [0, 50], 'independence')
+
