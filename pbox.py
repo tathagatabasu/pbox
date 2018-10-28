@@ -214,7 +214,7 @@ class pbox:
 		ys = func(ys1, ys2)
 		return sorted(ys)
 	
-	def norm(mean, sd, n):
+	def norm(mean, sd, n=200):
 		ps = np.linspace(0, 1, (n+1))
 		ps[0] = min(0.001, 1/n)
 		ps[n] = max(0.999, (1-1/n))
@@ -223,7 +223,7 @@ class pbox:
 			xs[i] = st.norm.ppf(ps[i],mean,sd)
 		return pbox(xs[:n:], xs[1::])
 	
-	def uniform(low, up, n):
+	def uniform(low, up, n=200):
 		ps = np.linspace(0, 1, (n+1))
 		ps[0] = min(0.001, 1/n)
 		ps[n] = max(0.999, (1-1/n))
@@ -232,12 +232,93 @@ class pbox:
 			xs[i] = st.uniform.ppf(ps[i],low,(up-low))
 		return pbox(xs[:n:], xs[1::])
 	
-	def triangular(low, mode, up, n):
+	def triangular(low, mode, up, n=200):
 		ps = np.linspace(0, 1, (n+1))
 		ps[0] = min(0.001, 1/n)
 		ps[n] = max(0.999, (1-1/n))
 		xs = [None]*(n+1)
 		for i in range(n+1):
 			xs[i] = st.triang.ppf(ps[i],(mode-low)/(up-low),low,(up-low))
+		return pbox(xs[:n:], xs[1::])
+	
+	def beta(a, b, n=200):
+		ps = np.linspace(0, 1, (n+1))
+		ps[0] = min(0.001, 1/n)
+		ps[n] = max(0.999, (1-1/n))
+		xs = [None]*(n+1)
+		for i in range(n+1):
+			xs[i] = st.beta.ppf(ps[i], a, b)
+		return pbox(xs[:n:], xs[1::])
+	
+	def cauchy(n=200):
+		ps = np.linspace(0, 1, (n+1))
+		ps[0] = min(0.001, 1/n)
+		ps[n] = max(0.999, (1-1/n))
+		xs = [None]*(n+1)
+		for i in range(n+1):
+			xs[i] = st.cauchy.ppf(ps[i])
+		return pbox(xs[:n:], xs[1::])
+	
+	def exponential(l, n=200):
+		ps = np.linspace(0, 1, (n+1))
+		ps[0] = min(0.001, 1/n)
+		ps[n] = max(0.999, (1-1/n))
+		xs = [None]*(n+1)
+		for i in range(n+1):
+			xs[i] = st.expon.ppf(ps[i], scale=(1/l))
+		return pbox(xs[:n:], xs[1::])
+	
+	def gamma(a, b, n=200):
+		ps = np.linspace(0, 1, (n+1))
+		ps[0] = min(0.001, 1/n)
+		ps[n] = max(0.999, (1-1/n))
+		xs = [None]*(n+1)
+		for i in range(n+1):
+			xs[i] = st.gamma.ppf(ps[i], a, scale=b)
+		return pbox(xs[:n:], xs[1::])
+	
+	def invgamma(a, b, n=200):
+		ps = np.linspace(0, 1, (n+1))
+		ps[0] = min(0.001, 1/n)
+		ps[n] = max(0.999, (1-1/n))
+		xs = [None]*(n+1)
+		for i in range(n+1):
+			xs[i] = st.invgamma.ppf(ps[i], a, scale=b)
+		return pbox(xs[:n:], xs[1::])
+	
+	def F(dfn, dfd, n=200):
+		ps = np.linspace(0, 1, (n+1))
+		ps[0] = min(0.001, 1/n)
+		ps[n] = max(0.999, (1-1/n))
+		xs = [None]*(n+1)
+		for i in range(n+1):
+			xs[i] = st.f.ppf(ps[i], dfn, dfd)
+		return pbox(xs[:n:], xs[1::])
+	
+	def chi(df, n=200):
+		ps = np.linspace(0, 1, (n+1))
+		ps[0] = min(0.001, 1/n)
+		ps[n] = max(0.999, (1-1/n))
+		xs = [None]*(n+1)
+		for i in range(n+1):
+			xs[i] = st.chi2.ppf(ps[i], df)
+		return pbox(xs[:n:], xs[1::])
+	
+	def laplace(a, b, n=200):
+		ps = np.linspace(0, 1, (n+1))
+		ps[0] = min(0.001, 1/n)
+		ps[n] = max(0.999, (1-1/n))
+		xs = [None]*(n+1)
+		for i in range(n+1):
+			xs[i] = st.laplace.ppf(ps[i], a, b)
+		return pbox(xs[:n:], xs[1::])
+	
+	def t(df, n=200):
+		ps = np.linspace(0, 1, (n+1))
+		ps[0] = min(0.001, 1/n)
+		ps[n] = max(0.999, (1-1/n))
+		xs = [None]*(n+1)
+		for i in range(n+1):
+			xs[i] = st.t.ppf(ps[i], df)
 		return pbox(xs[:n:], xs[1::])
 	

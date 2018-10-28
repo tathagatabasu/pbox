@@ -52,6 +52,22 @@ p.pbox.fdiv(pb1, pb3)
 
 p.pbox.plot(pb1)
 
+# distributions
+
+p.pbox.plot(p.pbox.norm(0, 1))
+p.pbox.plot(p.pbox.uniform(0, 1))
+p.pbox.plot(p.pbox.triangular(0, 1, 2))
+p.pbox.plot(p.pbox.beta(1, 1))
+p.pbox.plot(p.pbox.cauchy())
+p.pbox.plot(p.pbox.exponential(2))
+p.pbox.plot(p.pbox.gamma(1, 1))
+p.pbox.plot(p.pbox.invgamma(1, 1))
+p.pbox.plot(p.pbox.F(12, 14))
+p.pbox.plot(p.pbox.chi(5))
+p.pbox.plot(p.pbox.laplace(1, 2))
+p.pbox.plot(p.pbox.t(10))
+
+
 # example checks
 
 pb4 = p.pbox.uniform(0, 1, 40)
