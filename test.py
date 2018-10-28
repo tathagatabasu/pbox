@@ -48,7 +48,6 @@ p.pbox.plot(p.pbox.log(pb1))
 p.pbox.plot(p.pbox.exp(pb1))
 
 # independent assumption
-
 p.pbox.iadd(pb1, pb3)
 p.pbox.imul(pb1, pb3)
 p.pbox.isub(pb1, pb3)
@@ -59,6 +58,18 @@ p.pbox.fadd(pb1, pb3)
 p.pbox.fmul(pb1, pb3)
 p.pbox.fsub(pb1, pb3)
 p.pbox.fdiv(pb1, pb3)
+
+# perfect dependency
+p.pbox.plot(p.pbox.padd(pb1, pb3))
+p.pbox.plot(p.pbox.psub(pb1, pb3))
+p.pbox.plot(p.pbox.pmul(pb1, pb3))
+p.pbox.plot(p.pbox.pdiv(pb1, pb3))
+
+# opposite dependency
+p.pbox.plot(p.pbox.oadd(pb1, pb3))
+p.pbox.plot(p.pbox.osub(pb1, pb3))
+p.pbox.plot(p.pbox.omul(pb1, pb3))
+p.pbox.plot(p.pbox.odiv(pb1, pb3))
 
 # plot
 

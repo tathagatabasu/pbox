@@ -168,7 +168,7 @@ class pbox:
 	
 	# implementation of Williamson & Downs convolution algorithm
 
-	def conv(obj1, obj2, func):
+	def indepconv(obj1, obj2, func):
 		n = len(obj1)
 		if n != len(obj2):
 			raise ValueError('length of both pboxes must be same')
@@ -182,20 +182,20 @@ class pbox:
 	# operations with independent assumption
 	
 	def iadd(obj1, obj2):
-		return pbox.conv(obj1, obj2, op.add)
+		return pbox.indepconv(obj1, obj2, op.add)
 	
 	def isub(obj1, obj2):
 		return pbox.iadd(obj1, -obj2)
 	
 	def imul(obj1, obj2):
-		return pbox.conv(obj1, obj2, op.mul)
+		return pbox.indepconv(obj1, obj2, op.mul)
 	
 	def idiv(obj1, obj2):
 		return pbox.imul(obj1, (1/obj2))
 	
 	# Frechet dependency
 		
-	def frechet(obj1, obj2, func):
+	def frechetconv(obj1, obj2, func):
 		n = len(obj1)
 		if n != len(obj2):
 			raise ValueError('both pbox must have same length')
@@ -210,19 +210,73 @@ class pbox:
 	# operations with Frechet dependency assumption
 	
 	def fadd(obj1, obj2):
-		return pbox.frechet(obj1, obj2, np.add)
+		return pbox.frechetconv(obj1, obj2, np.add)
 	
 	def fmul(obj1, obj2):
 		if (obj1 <= 0) or (obj2 <= 0):
 			raise ValueError('inputs must be strictly positive')
 		else:
-			return pbox.frechet(obj1, obj2, np.multiply)
+			return pbox.frechetconv(obj1, obj2, np.multiply)
 		
 	def fsub(obj1, obj2):
 		return pbox.fadd(obj1, -obj2)
 	
 	def fdiv(obj1, obj2):
 		return pbox.fmul(obj1, 1/obj2)
+	
+	# Perfect convolution
+	
+	def perfectconv(obj1, obj2, func):
+		n = len(obj1)
+		if n != len(obj2):
+			raise ValueError('both pbox must have same length')
+		uxs = func(obj1.u.xs, obj2.u.xs)
+		lxs = func(obj1.l.xs, obj2.l.xs)
+		return pbox(uxs, lxs)
+	
+	# operations with perfect convolution
+	
+	def padd(obj1, obj2):
+		return pbox.perfectconv(obj1, obj2, np.add)
+	
+	def psub(obj1, obj2):
+		return pbox.padd(obj1, -obj2)
+	
+	def pmul(obj1, obj2):
+		if (obj1 <= 0) or (obj2 <= 0):
+			raise ValueError('inputs must be strictly positive')
+		else:
+			return pbox.perfectconv(obj1, obj2, np.multiply)
+		
+	def pdiv(obj1, obj2):
+		return pbox.pmul(obj1, 1/obj2)
+	
+	# Opposite dependency
+	
+	def oppositeconv(obj1, obj2, func):
+		n = len(obj1)
+		if n != len(obj2):
+			raise ValueError('both pbox must have same length')
+		uxs = func(obj1.u.xs, obj2.u.xs[::-1])
+		lxs = func(obj1.l.xs, obj2.l.xs[::-1])
+		return pbox(uxs, lxs)
+	
+	# operations with opposite dependency
+	
+	def oadd(obj1, obj2):
+		return pbox.oppositeconv(obj1, obj2, np.add)
+	
+	def osub(obj1, obj2):
+		return pbox.oadd(obj1, -obj2)
+	
+	def omul(obj1, obj2):
+		if (obj1 <= 0) or (obj2 <= 0):
+			raise ValueError('inputs must be strictly positive')
+		else:
+			return pbox.oppositeconv(obj1, obj2, np.multiply)
+		
+	def odiv(obj1, obj2):
+		return pbox.omul(obj1, 1/obj2)
 	
 	# p-box plot
 	
@@ -234,9 +288,12 @@ class pbox:
 		for i in np.linspace(0,199,200):
 			fxs[int(i)]=pbox.eval(self, xs[int(i)])
 		
+		xmin = xs_l - 1
+		xmax = xs_u + 1
 		plt.plot(xs, fxs, 'k')
 		plt.xlabel('x')
 		plt.ylabel('CDF')
+		plt.xlim(xmin, xmax)
 		plt.show()
 		
 	
