@@ -1,5 +1,6 @@
 import numpy as np
 import operator as op
+import matplotlib.pyplot as plt
 
 class cdf:
 	"""CUmulative distribution function"""
@@ -17,10 +18,10 @@ class cdf:
 		return np.mean(self.xs)
 	
 	def eval(self, x):
-		n = self.len()
+		n = len(self)
 		for i in range(n):
 			if x < self.xs[i]:
-				return 1/n
+				return i/n
 			elif x >= self.xs[(n-1)]:
 				return 1
 			
@@ -35,7 +36,6 @@ class pbox:
 		self.l = cdf(l)
 		
 	def __len__(self):
-#		return cdf.len(self.u)
 		return len(self.u)
 	
 	def mean(self):
@@ -65,9 +65,9 @@ class pbox:
 		return pbox(uxs, lxs)
 	
 	def __le__(self, e2):
-		return self.l.xs[(self.len()-1)] <= e2
+		return self.l.xs[(len(self)-1)] <= e2
 	def __lt__(self, e2):
-		return self.l.xs[(self.len()-1)] < e2
+		return self.l.xs[(len(self)-1)] < e2
 	def __ge__(self, e2):
 		return self.u.xs[0] >= e2
 	def __gt__(self, e2):
@@ -79,8 +79,8 @@ class pbox:
 		pass
 	
 	def conv(obj1, obj2, func):
-		n = obj1.len()
-		if n != obj2.len():
+		n = len(obj1)
+		if n != len(obj2):
 			raise ValueError('length of both pboxes must be same')
 		uxs = pbox.sortfunc(obj1.u.xs, obj2.u.xs, func)
 		lxs = pbox.sortfunc(obj1.l.xs, obj2.l.xs, func)
@@ -145,7 +145,46 @@ class pbox:
 		else:
 			return obj1 * (1/obj2)
 		
+	def frechet(obj1, obj2, func):
+		n = len(obj1)
+		if n != len(obj2):
+			raise ValueError('both pbox must have same length')
+		uxs = [None] * n
+		lxs = [None] * n
+		for i in range(n):
+			uxs[i] = max(func(obj1.u.xs[:i+1:],obj2.u.xs[i::-1]))
+			lxs[i] = min(func(obj1.l.xs[:i+1:],obj2.l.xs[i::-1]))
+		
+		return pbox(uxs, lxs)
 	
+	def fadd(obj1, obj2):
+		return pbox.frechet(obj1, obj2, np.add)
+	
+	def fmul(obj1, obj2):
+		if (obj1 <= 0) or (obj2 <= 0):
+			raise ValueError('inputs must be strictly positive')
+		else:
+			return pbox.frechet(obj1, obj2, np.multiply)
+		
+	def fsub(obj1, obj2):
+		return fadd(obj1, -obj2)
+	
+	def fdiv(obj1, obj2):
+		return fmul(obj1, 1/obj2)
+	
+	def plot(self):
+		xs_l = min(self.u.xs) - 10**(-5)
+		xs_u = max(self.l.xs) + 10**(-5)
+		xs = np.linspace(xs_l, xs_u, 200)
+		fxs = [None]*200
+		for i in np.linspace(0,199,200):
+			fxs[int(i)]=pbox.eval(self, xs[int(i)])
+		
+		plt.plot(xs, fxs, 'k')
+		plt.xlabel('x')
+		plt.ylabel('CDF')
+		plt.show()
+		
 	
 	@staticmethod
 		
