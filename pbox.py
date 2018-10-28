@@ -15,6 +15,15 @@ class cdf:
 	def __len__(self):
 		return len(self.xs)
 	
+	def min(self):
+		return self.xs[0]
+	
+	def max(self):
+		return self.xs[-1::]
+	
+	def print(self):
+		print(self.xs)
+	
 	def mean(self):
 		return np.mean(self.xs)
 	
@@ -39,6 +48,15 @@ class pbox:
 		
 	def __len__(self):
 		return len(self.u)
+	
+	def min(self):
+		return self.u.xs[0]
+	
+	def max(self):
+		return self.l.xs[-1::]
+	
+	def print(self):
+		print([self.u.xs , self.l.xs])
 	
 	def mean(self):
 		return [cdf.mean(self.u), cdf.mean(self.l)]
@@ -128,6 +146,25 @@ class pbox:
 			raise ValueError('inputs must be strictly positive')
 		else:
 			return self * (1/obj2)
+	
+	def __pow__(self, obj1):
+		uxs = np.power(self.u.xs, obj1)
+		lxs = np.power(self.l.xs, obj1)
+		return pbox(uxs, lxs)
+	
+	def __rpow__(self, obj1):
+		uxs = np.power(obj1, self.u.xs)
+		lxs = np.power(obj1, self.l.xs)
+		return pbox(uxs, lxs)
+	
+	def log(self):
+		return pbox(np.log(self.u.xs), np.log(self.u.xs))
+	
+	def exp(self):
+		return pbox(np.exp(self.u.xs), np.exp(self.l.xs))
+	
+	
+	
 	
 	# implementation of Williamson & Downs convolution algorithm
 

@@ -10,6 +10,9 @@ xs = np.linspace(0, 1, 11)
 
 cdf1 = p.cdf(xs)
 len(cdf1)
+cdf1.min()
+cdf1.max()
+cdf1.print()
 cdf1.mean()
 cdf1.eval(0.5)
 
@@ -20,6 +23,9 @@ lxs = np.linspace(0.2, 1.2, 11)
 
 pb1 = p.pbox(uxs, lxs)
 len(pb1)
+pb1.min()
+pb1.max()
+pb1.print()
 pb1.mean()
 pb1.sd()
 pb1.eval(.5)
@@ -31,9 +37,15 @@ pb2 = -pb1
 pb1 < 1
 pb2 > 0
 
-# scalar addition
+# inbuilts
 
 pb3 = pb2 + 3
+p.pbox.plot(pb1 ** 2)
+
+p.pbox.plot(2 ** pb1)
+
+p.pbox.plot(p.pbox.log(pb1))
+p.pbox.plot(p.pbox.exp(pb1))
 
 # independent assumption
 
@@ -81,3 +93,4 @@ pb8 = pb7
 pb9 = p.pbox.fadd(pb7, pb8)
 # Williamson & Downs figure 19
 p.pbox.plot(pb9)
+
