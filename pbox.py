@@ -1,6 +1,7 @@
 import numpy as np
 import operator as op
 import matplotlib.pyplot as plt
+import scipy.stats as st
 
 class cdf:
 	"""CUmulative distribution function"""
@@ -196,3 +197,13 @@ class pbox:
 		ys2 = np.repeat(xs2, n1)
 		ys = func(ys1, ys2)
 		return sorted(ys)
+	
+	def norm(mean, sd, n):
+		ps = np.linspace(0, 1, (n+1))
+		ps[0] = min(0.001, 1/n)
+		ps[n] = max(0.999, (1-1/n))
+		xs = [None]*(n+1)
+		for i in range(n+1):
+			xs[i] = st.norm.ppf(ps[i],mean,sd)
+		return pbox(xs[:n:], xs[1::])
+	
