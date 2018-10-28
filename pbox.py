@@ -153,8 +153,8 @@ class pbox:
 		uxs = [None] * n
 		lxs = [None] * n
 		for i in range(n):
-			uxs[i] = max(func(obj1.u.xs[:i+1:],obj2.u.xs[i::-1]))
-			lxs[i] = min(func(obj1.l.xs[:i+1:],obj2.l.xs[i::-1]))
+			uxs[i] = max(func(obj1.u.xs[:i+1:],obj2.u.xs[:i+1:][::-1]))
+			lxs[i] = min(func(obj1.l.xs[i::],obj2.l.xs[i::][::-1]))
 		
 		return pbox(uxs, lxs)
 	
@@ -205,5 +205,23 @@ class pbox:
 		xs = [None]*(n+1)
 		for i in range(n+1):
 			xs[i] = st.norm.ppf(ps[i],mean,sd)
+		return pbox(xs[:n:], xs[1::])
+	
+	def uniform(low, up, n):
+		ps = np.linspace(0, 1, (n+1))
+		ps[0] = min(0.001, 1/n)
+		ps[n] = max(0.999, (1-1/n))
+		xs = [None]*(n+1)
+		for i in range(n+1):
+			xs[i] = st.uniform.ppf(ps[i],low,(up-low))
+		return pbox(xs[:n:], xs[1::])
+	
+	def triangular(low, mode, up, n):
+		ps = np.linspace(0, 1, (n+1))
+		ps[0] = min(0.001, 1/n)
+		ps[n] = max(0.999, (1-1/n))
+		xs = [None]*(n+1)
+		for i in range(n+1):
+			xs[i] = st.triang.ppf(ps[i],(mode-low)/(up-low),low,(up-low))
 		return pbox(xs[:n:], xs[1::])
 	
