@@ -321,37 +321,52 @@ class pbox:
 		ps = np.linspace(0, 1, (n+1))
 		ps[0] = min(0.001, 1/n)
 		ps[n] = max(0.999, (1-1/n))
-		xs = [None]*(n+1)
-		for i in range(n+1):
-			xs[i] = st.norm.ppf(ps[i],mean,sd)
-		return pbox(xs[:n:], xs[1::])
+		if np.size(mean) == 1:
+			mean = [mean]*2
+		if np.size(sd) == 1:
+			sd = [sd]*2
+		xs = np.zeros(shape = (4,(n+1)))
+		for j in range(4):
+			for i in range(n+1):
+				xs[j][i] = st.norm.ppf(ps[i],mean[j//2],sd[j%2])
+		xs = np.matrix(xs)
+		uxs = np.array(xs.min(0))[0].tolist()
+		lxs = np.array(xs.max(0))[0].tolist()
+		return pbox(uxs[:n:], lxs[1::])
 	
 	def uniform(low, up, n=200):
 		ps = np.linspace(0, 1, (n+1))
 		ps[0] = min(0.001, 1/n)
 		ps[n] = max(0.999, (1-1/n))
-		xs = [None]*(n+1)
-		for i in range(n+1):
-			xs[i] = st.uniform.ppf(ps[i],low,(up-low))
-		return pbox(xs[:n:], xs[1::])
-	
-	def triangular(low, mode, up, n=200):
-		ps = np.linspace(0, 1, (n+1))
-		ps[0] = min(0.001, 1/n)
-		ps[n] = max(0.999, (1-1/n))
-		xs = [None]*(n+1)
-		for i in range(n+1):
-			xs[i] = st.triang.ppf(ps[i],(mode-low)/(up-low),low,(up-low))
-		return pbox(xs[:n:], xs[1::])
+		if np.size(low) == 1:
+			low = [low]*2
+		if np.size(up) == 1:
+			up = [up]*2
+		xs = np.zeros(shape = (4,(n+1)))
+		for j in range(4):
+			for i in range(n+1):
+				xs[j][i] = st.uniform.ppf(ps[i],low[j//2],(up[j%2]-low[j//2]))
+		xs = np.matrix(xs)
+		uxs = np.array(xs.min(0))[0].tolist()
+		lxs = np.array(xs.max(0))[0].tolist()
+		return pbox(uxs[:n:], lxs[1::])
 	
 	def beta(a, b, n=200):
 		ps = np.linspace(0, 1, (n+1))
 		ps[0] = min(0.001, 1/n)
 		ps[n] = max(0.999, (1-1/n))
-		xs = [None]*(n+1)
-		for i in range(n+1):
-			xs[i] = st.beta.ppf(ps[i], a, b)
-		return pbox(xs[:n:], xs[1::])
+		if np.size(a) == 1:
+			a = [a]*2
+		if np.size(b) == 1:
+			b = [b]*2
+		xs = np.zeros(shape = (4,(n+1)))
+		for j in range(4):
+			for i in range(n+1):
+				xs[j][i] = st.beta.ppf(ps[i],a[j//2],b[j%2])
+		xs = np.matrix(xs)
+		uxs = np.array(xs.min(0))[0].tolist()
+		lxs = np.array(xs.max(0))[0].tolist()
+		return pbox(uxs[:n:], lxs[1::])
 	
 	def cauchy(n=200):
 		ps = np.linspace(0, 1, (n+1))
@@ -366,62 +381,132 @@ class pbox:
 		ps = np.linspace(0, 1, (n+1))
 		ps[0] = min(0.001, 1/n)
 		ps[n] = max(0.999, (1-1/n))
-		xs = [None]*(n+1)
-		for i in range(n+1):
-			xs[i] = st.expon.ppf(ps[i], scale=(1/l))
-		return pbox(xs[:n:], xs[1::])
+		if np.size(l) == 1:
+			l = [l]*2
+		xs = np.zeros(shape = (2,(n+1)))
+		for j in range(2):
+			for i in range(n+1):
+				xs[j][i] = st.expon.ppf(ps[i], scale=(1/l[j//2]))
+		xs = np.matrix(xs)
+		uxs = np.array(xs.min(0))[0].tolist()
+		lxs = np.array(xs.max(0))[0].tolist()
+		return pbox(uxs[:n:], lxs[1::])
 	
 	def gamma(a, b, n=200):
 		ps = np.linspace(0, 1, (n+1))
 		ps[0] = min(0.001, 1/n)
 		ps[n] = max(0.999, (1-1/n))
-		xs = [None]*(n+1)
-		for i in range(n+1):
-			xs[i] = st.gamma.ppf(ps[i], a, scale=b)
-		return pbox(xs[:n:], xs[1::])
+		if np.size(a) == 1:
+			a = [a]*2
+		if np.size(b) == 1:
+			b = [b]*2
+		xs = np.zeros(shape = (4,(n+1)))
+		for j in range(4):
+			for i in range(n+1):
+				xs[j][i] = st.gamma.ppf(ps[i],a[j//2],scale=b[j%2])
+		xs = np.matrix(xs)
+		uxs = np.array(xs.min(0))[0].tolist()
+		lxs = np.array(xs.max(0))[0].tolist()
+		return pbox(uxs[:n:], lxs[1::])
 	
 	def invgamma(a, b, n=200):
 		ps = np.linspace(0, 1, (n+1))
 		ps[0] = min(0.001, 1/n)
 		ps[n] = max(0.999, (1-1/n))
-		xs = [None]*(n+1)
-		for i in range(n+1):
-			xs[i] = st.invgamma.ppf(ps[i], a, scale=b)
-		return pbox(xs[:n:], xs[1::])
+		if np.size(a) == 1:
+			a = [a]*2
+		if np.size(b) == 1:
+			b = [b]*2
+		xs = np.zeros(shape = (4,(n+1)))
+		for j in range(4):
+			for i in range(n+1):
+				xs[j][i] = st.invgamma.ppf(ps[i],a[j//2],scale=b[j%2])
+		xs = np.matrix(xs)
+		uxs = np.array(xs.min(0))[0].tolist()
+		lxs = np.array(xs.max(0))[0].tolist()
+		return pbox(uxs[:n:], lxs[1::])
 	
 	def F(dfn, dfd, n=200):
 		ps = np.linspace(0, 1, (n+1))
 		ps[0] = min(0.001, 1/n)
 		ps[n] = max(0.999, (1-1/n))
-		xs = [None]*(n+1)
-		for i in range(n+1):
-			xs[i] = st.f.ppf(ps[i], dfn, dfd)
-		return pbox(xs[:n:], xs[1::])
+		if np.size(dfn) == 1:
+			dfn = [dfn]*2
+		if np.size(dfd) == 1:
+			dfd = [dfd]*2
+		xs = np.zeros(shape = (4,(n+1)))
+		for j in range(4):
+			for i in range(n+1):
+				xs[j][i] = st.f.ppf(ps[i],dfn[j//2],dfd[j%2])
+		xs = np.matrix(xs)
+		uxs = np.array(xs.min(0))[0].tolist()
+		lxs = np.array(xs.max(0))[0].tolist()
+		return pbox(uxs[:n:], lxs[1::])
 	
-	def chi(df, n=200):
+	def chi2(df, n=200):
 		ps = np.linspace(0, 1, (n+1))
 		ps[0] = min(0.001, 1/n)
 		ps[n] = max(0.999, (1-1/n))
-		xs = [None]*(n+1)
-		for i in range(n+1):
-			xs[i] = st.chi2.ppf(ps[i], df)
-		return pbox(xs[:n:], xs[1::])
+		if np.size(df) == 1:
+			df = [df]*2
+		xs = np.zeros(shape = (2,(n+1)))
+		for j in range(2):
+			for i in range(n+1):
+				xs[j][i] = st.chi2.ppf(ps[i], df[j//2])
+		xs = np.matrix(xs)
+		uxs = np.array(xs.min(0))[0].tolist()
+		lxs = np.array(xs.max(0))[0].tolist()
+		return pbox(uxs[:n:], lxs[1::])
 	
 	def laplace(a, b, n=200):
 		ps = np.linspace(0, 1, (n+1))
 		ps[0] = min(0.001, 1/n)
 		ps[n] = max(0.999, (1-1/n))
-		xs = [None]*(n+1)
-		for i in range(n+1):
-			xs[i] = st.laplace.ppf(ps[i], a, b)
-		return pbox(xs[:n:], xs[1::])
+		if np.size(a) == 1:
+			a = [a]*2
+		if np.size(b) == 1:
+			b = [b]*2
+		xs = np.zeros(shape = (4,(n+1)))
+		for j in range(4):
+			for i in range(n+1):
+				xs[j][i] = st.laplace.ppf(ps[i],a[j//2],b[j%2])
+		xs = np.matrix(xs)
+		uxs = np.array(xs.min(0))[0].tolist()
+		lxs = np.array(xs.max(0))[0].tolist()
+		return pbox(uxs[:n:], lxs[1::])
 	
 	def t(df, n=200):
 		ps = np.linspace(0, 1, (n+1))
 		ps[0] = min(0.001, 1/n)
 		ps[n] = max(0.999, (1-1/n))
-		xs = [None]*(n+1)
-		for i in range(n+1):
-			xs[i] = st.t.ppf(ps[i], df)
-		return pbox(xs[:n:], xs[1::])
+		if np.size(df) == 1:
+			df = [df]*2
+		xs = np.zeros(shape = (2,(n+1)))
+		for j in range(2):
+			for i in range(n+1):
+				xs[j][i] = st.t.ppf(ps[i], df[j//2])
+		xs = np.matrix(xs)
+		uxs = np.array(xs.min(0))[0].tolist()
+		lxs = np.array(xs.max(0))[0].tolist()
+		return pbox(uxs[:n:], lxs[1::])
+
+	def triangular(low, mode, up, n=200):
+		ps = np.linspace(0, 1, (n+1))
+		ps[0] = min(0.001, 1/n)
+		ps[n] = max(0.999, (1-1/n))
+		if np.size(low) == 1:
+			low = [low]*2
+		if np.size(up) == 1:
+			up = [up]*2
+		if np.size(mode) == 1:
+			mode = [mode]*2
+		xs = np.zeros(shape = (8,(n+1)))
+		for j in range(8):
+			for i in range(n+1):
+				xs[j][i] = st.triang.ppf(ps[i],(mode[(j-(j//4)*4)//2]-low[j//4])\
+										 /(up[j%2]-low[j//4]),low[j//4],(up[j%2]-low[j//4]))
+		xs = np.matrix(xs)
+		uxs = np.array(xs.min(0))[0].tolist()
+		lxs = np.array(xs.max(0))[0].tolist()
+		return pbox(uxs[:n:], lxs[1::])
 	

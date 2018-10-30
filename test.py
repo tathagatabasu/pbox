@@ -77,17 +77,17 @@ p.pbox.plot(pb1)
 
 # distributions
 
-p.pbox.plot(p.pbox.norm(0, 1))
-p.pbox.plot(p.pbox.uniform(0, 1))
-p.pbox.plot(p.pbox.triangular(0, 1, 2))
-p.pbox.plot(p.pbox.beta(1, 1))
+p.pbox.plot(p.pbox.norm([0,1], [1,2]))
+p.pbox.plot(p.pbox.uniform([0,2], [3,6]))
+p.pbox.plot(p.pbox.triangular([0,1], [1,2], [2,3]))
+p.pbox.plot(p.pbox.beta([1,2], [1, 3]))
 p.pbox.plot(p.pbox.cauchy())
-p.pbox.plot(p.pbox.exponential(2))
-p.pbox.plot(p.pbox.gamma(1, 1))
-p.pbox.plot(p.pbox.invgamma(1, 1))
-p.pbox.plot(p.pbox.F(12, 14))
-p.pbox.plot(p.pbox.chi(5))
-p.pbox.plot(p.pbox.laplace(1, 2))
+p.pbox.plot(p.pbox.exponential([1, 2]))
+p.pbox.plot(p.pbox.gamma([1,2], [1, 3]))
+p.pbox.plot(p.pbox.invgamma([1,2], [1, 3]))
+p.pbox.plot(p.pbox.F([10,12], [12,14]))
+p.pbox.plot(p.pbox.chi2([5,6]))
+p.pbox.plot(p.pbox.laplace([1,2], [2,3]))
 p.pbox.plot(p.pbox.t(10))
 
 
