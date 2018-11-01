@@ -182,16 +182,31 @@ class pbox:
 	# operations with independent assumption
 	
 	def iadd(obj1, obj2):
-		return pbox.indepconv(obj1, obj2, op.add)
+		if pbox.ispbox(obj1) and pbox.ispbox(obj2):
+			return pbox.indepconv(obj1, obj2, op.add)
+		else:
+			raise ValueError('inputs must be pbox')
 	
 	def isub(obj1, obj2):
-		return pbox.iadd(obj1, -obj2)
+		if pbox.ispbox(obj1) and pbox.ispbox(obj2):
+			return pbox.iadd(obj1, -obj2)
+		else:
+			raise ValueError('inputs must be pbox')
 	
 	def imul(obj1, obj2):
-		return pbox.indepconv(obj1, obj2, op.mul)
+		if pbox.ispbox(obj1) and pbox.ispbox(obj2):
+			if (obj1 <= 0) or (obj2 <= 0):
+				raise ValueError('inputs must be strictly positive')
+			else:
+				return pbox.indepconv(obj1, obj2, op.mul)
+		else:
+			raise ValueError('inputs must be pbox')
 	
 	def idiv(obj1, obj2):
-		return pbox.imul(obj1, (1/obj2))
+		if pbox.ispbox(obj1) and pbox.ispbox(obj2):
+			return pbox.imul(obj1, (1/obj2))
+		else:
+			raise ValueError('inputs must be pbox')
 	
 	# Frechet dependency
 		
@@ -210,19 +225,31 @@ class pbox:
 	# operations with Frechet dependency assumption
 	
 	def fadd(obj1, obj2):
-		return pbox.frechetconv(obj1, obj2, np.add)
+		if pbox.ispbox(obj1) and pbox.ispbox(obj2):
+			return pbox.frechetconv(obj1, obj2, np.add)
+		else:
+			raise ValueError('inputs must be pbox')
 	
 	def fmul(obj1, obj2):
-		if (obj1 <= 0) or (obj2 <= 0):
-			raise ValueError('inputs must be strictly positive')
+		if pbox.ispbox(obj1) and pbox.ispbox(obj2):
+			if (obj1 <= 0) or (obj2 <= 0):
+				raise ValueError('inputs must be strictly positive')
+			else:
+				return pbox.frechetconv(obj1, obj2, np.multiply)
 		else:
-			return pbox.frechetconv(obj1, obj2, np.multiply)
+			raise ValueError('inputs must be pbox')
 		
 	def fsub(obj1, obj2):
-		return pbox.fadd(obj1, -obj2)
+		if pbox.ispbox(obj1) and pbox.ispbox(obj2):
+			return pbox.fadd(obj1, -obj2)
+		else:
+			raise ValueError('inputs must be pbox')
 	
 	def fdiv(obj1, obj2):
-		return pbox.fmul(obj1, 1/obj2)
+		if pbox.ispbox(obj1) and pbox.ispbox(obj2):
+			return pbox.fmul(obj1, 1/obj2)
+		else:
+			raise ValueError('inputs must be pbox')
 	
 	# Perfect convolution
 	
@@ -237,19 +264,31 @@ class pbox:
 	# operations with perfect convolution
 	
 	def padd(obj1, obj2):
-		return pbox.perfectconv(obj1, obj2, np.add)
+		if pbox.ispbox(obj1) and pbox.ispbox(obj2):
+			return pbox.perfectconv(obj1, obj2, np.add)
+		else:
+			raise ValueError('inputs must be pbox')
 	
 	def psub(obj1, obj2):
-		return pbox.padd(obj1, -obj2)
+		if pbox.ispbox(obj1) and pbox.ispbox(obj2):
+			return pbox.padd(obj1, -obj2)
+		else:
+			raise ValueError('inputs must be pbox')
 	
 	def pmul(obj1, obj2):
-		if (obj1 <= 0) or (obj2 <= 0):
-			raise ValueError('inputs must be strictly positive')
+		if pbox.ispbox(obj1) and pbox.ispbox(obj2):
+			if (obj1 <= 0) or (obj2 <= 0):
+				raise ValueError('inputs must be strictly positive')
+			else:
+				return pbox.perfectconv(obj1, obj2, np.multiply)
 		else:
-			return pbox.perfectconv(obj1, obj2, np.multiply)
+			raise ValueError('inputs must be pbox')
 		
 	def pdiv(obj1, obj2):
-		return pbox.pmul(obj1, 1/obj2)
+		if pbox.ispbox(obj1) and pbox.ispbox(obj2):
+			return pbox.pmul(obj1, 1/obj2)
+		else:
+			raise ValueError('inputs must be pbox')
 	
 	# Opposite dependency
 	
@@ -264,19 +303,31 @@ class pbox:
 	# operations with opposite dependency
 	
 	def oadd(obj1, obj2):
-		return pbox.oppositeconv(obj1, obj2, np.add)
+		if pbox.ispbox(obj1) and pbox.ispbox(obj2):
+			return pbox.oppositeconv(obj1, obj2, np.add)
+		else:
+			raise ValueError('inputs must be pbox')
 	
 	def osub(obj1, obj2):
-		return pbox.oadd(obj1, -obj2)
+		if pbox.ispbox(obj1) and pbox.ispbox(obj2):
+			return pbox.oadd(obj1, -obj2)
+		else:
+			raise ValueError('inputs must be pbox')
 	
 	def omul(obj1, obj2):
-		if (obj1 <= 0) or (obj2 <= 0):
-			raise ValueError('inputs must be strictly positive')
+		if pbox.ispbox(obj1) and pbox.ispbox(obj2):
+			if (obj1 <= 0) or (obj2 <= 0):
+				raise ValueError('inputs must be strictly positive')
+			else:
+				return pbox.oppositeconv(obj1, obj2, np.multiply)
 		else:
-			return pbox.oppositeconv(obj1, obj2, np.multiply)
+			raise ValueError('inputs must be pbox')
 		
 	def odiv(obj1, obj2):
-		return pbox.omul(obj1, 1/obj2)
+		if pbox.ispbox(obj1) and pbox.ispbox(obj2):
+			return pbox.omul(obj1, 1/obj2)
+		else:
+			raise ValueError('inputs must be pbox')
 	
 	# p-box plot
 	
@@ -307,6 +358,9 @@ class pbox:
 		
 	
 	@staticmethod
+	
+	def ispbox(obj):
+		return(type(obj)==pbox)
 		
 	def sortfunc(xs1, xs2, func):
 		pass
