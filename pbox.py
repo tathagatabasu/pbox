@@ -30,9 +30,9 @@ class cdf:
 	def eval(self, x):
 		n = len(self)
 		for i in range(n):
-			if x < self.xs[i]:
+			if x <= self.xs[i]:
 				return i/n
-			elif x >= self.xs[(n-1)]:
+			elif x > self.xs[(n-1)]:
 				return 1
 			
 class pbox:
@@ -331,7 +331,7 @@ class pbox:
 	
 	# p-box plot
 	
-	def plot(self, xlim=[None, None], title='P-Box'):
+	def plot(self, figno=0, xlim=[None, None], title='P-Box', block=False):
 		xs_l = min(self.u.xs) - 10**(-5)
 		xs_u = max(self.l.xs) + 10**(-5)
 		xs = np.linspace(xs_l, xs_u, 200)
@@ -348,13 +348,13 @@ class pbox:
 				xmin = xs_l - 10**-1
 		elif xlim[1]==None:
 			xmax = xs_u + 10**-1
-		
+		plt.figure(figno)
 		plt.plot(xs, fxs, 'k')
 		plt.xlabel('x')
 		plt.ylabel('CDF')
 		plt.title(title)
 		plt.xlim(xmin, xmax)
-		plt.show()
+		plt.show(block)
 		
 	
 	@staticmethod
